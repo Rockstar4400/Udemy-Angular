@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+
+import { map } from 'rxjs/operators'
+
 import { Post } from './post.model';
 
 @Component({
@@ -9,43 +11,51 @@ import { Post } from './post.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  loadedPosts: Post[] = [];
+  loadedPosts = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+    ) {}
 
   ngOnInit() {
-    this.getPosts();
+    this.fetchPost();
   }
 
   onCreatePost(postData: Post) {
-    this.http.post<{name: string }>("", postData)
-    .subscribe((responseData) => {
-      console.log(responseData);
+    // Send Http request
+    this.http.post<{name: string}>(
+      "https://comisionfederal-188703.firebaseio.com/recipes.json",
+      postData
+    ).subscribe(responseData =>{
+
     });
   }
 
   onFetchPosts() {
     // Send Http request
+    this.fetchPost();
   }
 
   onClearPosts() {
     // Send Http request
   }
 
-  private getPosts() {
-    this.http.get<{[key: string]: Post}>('')
+  private fetchPost(){
+    this.http
+    .get<{[key: string] : Post}>('https://comisionfederal-188703.firebaseio.com/recipes.json')
     .pipe(
       map(responseData => {
-      const postArray: Post[] = [];
+      const postsArray: Post[] = [];
       for(const key in responseData){
         if(responseData.hasOwnProperty(key)){
-        postArray.push({...responseData[key], id: key})
+        postsArray.push({...responseData[key], id: key });
         }
       }
-      return postArray;
-    }))
-    .subscribe(posts =>{
-      this.loadedPosts = posts;
+      return postsArray;
+    })
+    )
+    .subscribe(posts => {
+
     });
   }
 }
