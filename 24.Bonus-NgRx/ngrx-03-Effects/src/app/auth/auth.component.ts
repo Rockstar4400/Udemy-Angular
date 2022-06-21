@@ -57,10 +57,6 @@ ngOnInit() {
     const email = form.value.email;
     const password = form.value.password;
 
-    let authObs: Observable<AuthResponseData>;
-
-    this.isLoading = true;
-
     if (this.isLoginMode) {
       this.store.dispatch(new AuthActions.LoginStart({
         email: email,
@@ -68,13 +64,8 @@ ngOnInit() {
       })
       )
     } else {
-      authObs = this.authService.signup(email, password);
+      this.store.dispatch(new AuthActions.SignupStart({email: email, password: password}))
     }
-
-    this.store.select('auth').subscribe(authState =>{
-
-    });
-
     form.reset();
   }
 
